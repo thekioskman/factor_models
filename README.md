@@ -133,3 +133,14 @@ We can see that most of our results are fairly intuitive, things such as cash, r
 Some results surpised me though. The first is Total Assets having a negative correlation. The only rationalization I can have for this is that because the companies have such large market cap, changes in total assets are fairly irrelevant, of course, we can also see the argument that having too much of your money in assets is not a good thing, specifically for big software companies. 
 
 The next interesting result is that total liability is positively correlated with returns. For the explanation, I look to "Short Term Debt" and "Cashflows From Investing Activities" which are also both positively correlated. We can ration by short term debt would be a good thing, as it is usually indicative of a company needing some extra funding for a big project. We can see that the debt and subsequent liability could have been used to positively invest in the future of the company. Large-cap companies are usually more secure in taking out loans, so seeing increased liability could be a good sign that they found an investment opportunity, though the same cannot be said for smaller companies (which could default).  
+
+
+## Non-Traditional Factors
+
+### Twitter Sentiment
+
+
+### Momentum 
+
+
+### Indicators?
