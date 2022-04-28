@@ -80,4 +80,56 @@ $$
 Rerturn_{t+1} = \alpha + \beta_1 *Fac_1 + \beta_2 *Fac_2 + \beta_3*Fac_3 ... +\beta_n * Fac_n
 $$
 
-We want to find the relationship between our factors, and some future return rather than some past/present return.
+We want to find the relationship between our factors, and some future return rather than some past/present return. We can easily make this change in the code, buy changing how we calculate the returns. Currently, we are looking at returns 3 months before the quarterly reports come out.
+
+```
+times = balance_sheet.columns.values[1::]
+times = list(map(datetime.fromisoformat, times))
+stock_price_history = pd.read_csv(path + "/stock_prices.csv")
+stock_price_history["Date"] = pd.to_datetime(stock_price_history["Date"])
+quarterly_returns = []
+
+
+for i in range(len(times)):
+    quarterly_data = pd.DataFrame()
+    quarterly_data = stock_price_history[(stock_price_history["Date"] < times[i] ) & (stock_price_history["Date"] > times[i] - dateutil.relativedelta.relativedelta(months=3))].reset_index(drop=True)
+    #calculate the net return in each quater
+    if not(quarterly_data.empty) :
+        total_ret = (quarterly_data.loc[len(quarterly_data)-1]["Close"] - quarterly_data.loc[0]["Open"])/quarterly_data.loc[0]["Open"]
+        quarterly_returns.append(total_ret)
+    else:
+        quarterly_returns.append(None)
+```
+
+But we can adjust the holding period to be, for example, 2 weeks after the quarterly reports come out. This would then enable is to predict positive or negative shifts if the price over the next two weeks after quarterly reports based on the fundemental factors we are considering.
+
+## Analysis of Outcome
+
+Our model was set up as a regression between the 3-month return leading up to the quarterly balance sheet, cash flow statement, and earnings reports. It was an analytical experiment to check the relationship of certain fundamental factors to the returns of a stock during the same period. 
+
+The first experiment I did was without normalizing the input data from the top 700 TECH companies ranked by market cap. This means that the regression was working with large numbers (about 10^11). So naturally, the coefficients of our regression were super small numbers, to make it more readable, I divided all the values by the absolute value of Change To Liabilities. (That is why the constant is a huge number)
+
+```
+Output:
+const                                        9.140611e+11
+Change To Liabilities                       -1.000000e+00
+Total Cash From Operating Activities         1.351298e+00
+Net Borrowings                              -1.991888e+00
+Total Cashflows From Investing Activities   -4.411001e+00
+Investments                                  2.564988e+00
+Net Income                                  -3.986257e+00
+Total Liab                                   3.498029e-01
+Total Assets                                -2.967563e-01
+Retained Earnings                            2.671895e-01
+Cash                                         3.151412e+00
+Net Receivables                              1.945539e+00
+Long Term Debt                              -1.170602e+00
+Short Long Term Debt                         2.874320e-01
+Total Current Assets                        -1.049530e+00
+```
+
+We can see that most of our results are fairly intuitive, things such as cash, retained earnings and net receivables were positively correlated with the returns as you would expect. While things like Net Borrowing, Long Term Debt, and Total Liabilities were negatively correlated. 
+
+Some results surpised me though. The first is Total Assets having a negative correlation. The only rationalization I can have for this is that because the companies have such large market cap, changes in total assets are fairly irrelevant, of course, we can also see the argument that having too much of your money in assets is not a good thing, specifically for big software companies. 
+
+The next interesting result is that total liability is positively correlated with returns. For the explanation, I look to "Short Term Debt" and "Cashflows From Investing Activities" which are also both positively correlated. We can ration by short term debt would be a good thing, as it is usually indicative of a company needing some extra funding for a big project. We can see that the debt and subsequent liability could have been used to positively invest in the future of the company. Large-cap companies are usually more secure in taking out loans, so seeing increased liability could be a good sign that they found an investment opportunity, though the same cannot be said for smaller companies (which could default).  
