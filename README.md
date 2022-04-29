@@ -134,8 +134,79 @@ Some results surpised me though. The first is Total Assets having a negative cor
 
 The next interesting result is that total liability is positively correlated with returns. For the explanation, I look to "Short Term Debt" and "Cashflows From Investing Activities" which are also both positively correlated. We can ration by short term debt would be a good thing, as it is usually indicative of a company needing some extra funding for a big project. We can see that the debt and subsequent liability could have been used to positively invest in the future of the company. Large-cap companies are usually more secure in taking out loans, so seeing increased liability could be a good sign that they found an investment opportunity, though the same cannot be said for smaller companies (which could default).  
 
+## Review of Outcomes and Conclusion
+After a further review of the results and the data, I discovered the reason why some parts of the results were not adding up. I had forgotten that the list of the top 700 tech companies contained many international corporations with stock prices quoted in their native currency. Although this does not change the aspect of return calculation, as we just took the stock price on the day after the reports as the final amount and the stock price 3 months ago as the principle.
+
+<img src="https://render.githubusercontent.com/render/math?math=Return = \frac{Price_i}{Price_f}">
+
+But, having international companies involved does add a component of currency exchange rate risk that we have not accounted for in our model. Due to the small sample size, I believe that these accounted for some odd results. After removing the international companies, I obtained the following revised results.
+
+const                                        5.825244e+10
+Change To Liabilities                        1.000000e+00
+Total Cash From Operating Activities         3.473057e-01
+Net Borrowings                              -1.577814e-02
+Total Cashflows From Investing Activities   -1.270778e+00
+Investments                                  1.479920e-02
+Net Income                                   8.131597e-01
+Total Liab                                  -7.365760e-02
+Total Assets                                 4.976205e-02
+Retained Earnings                           -2.056288e-01
+Cash                                        -7.511013e-02
+Net Receivables                              7.291306e-02
+Long Term Debt                              -3.087043e-01
+Short Long Term Debt                         1.137247e+00
+Total Current Assets                         6.000365e-02
+
+The results may not entirely be what we expected, but again it is important to note that I used large-cap stocks in my example, and there is research to support that factor models may not work very well on large-cap stocks. http://bearcave.com/finance/thesis_project/factor_analysis.pdf 
+
+
+## Building a Predictive model
+The second experiment I ran, was to see if the factor model had any predictive power. Instead of regression against the returns from 3 months prior, I performed a regression on the returns on a holding period of 2 weeks after the reports came out. The goal was to see which factors contributed most greatly to post-earnings drift.
+```
+times = balance_sheet.columns.values[1::]
+times = list(map(datetime.fromisoformat, times))
+stock_price_history = pd.read_csv(path + "/stock_prices.csv")
+stock_price_history["Date"] = pd.to_datetime(stock_price_history["Date"])
+quarterly_returns = []
+
+
+for i in range(len(times)):
+    quarterly_data = pd.DataFrame()
+    #quarterly_data = stock_price_history[(stock_price_history["Date"] < times[i] ) & (stock_price_history["Date"] > times[i] - dateutil.relativedelta.relativedelta(months=3))].reset_index(drop=True)
+    
+    quarterly_data = stock_price_history[(stock_price_history["Date"] > times[i] ) & (stock_price_history["Date"] < times[i] + dateutil.relativedelta.relativedelta(weeks=2))].reset_index(drop=True)
+
+    #calculate the net return in each quater
+    if not(quarterly_data.empty) :
+        total_ret = (quarterly_data.loc[len(quarterly_data)-1]["Close"] - quarterly_data.loc[0]["Open"])/quarterly_data.loc[0]["Open"]
+        quarterly_returns.append(total_ret)
+    else:
+        quarterly_returns.append(None)
+```
+
+
+
+```
+The results are as follows:
+const                        8.163774e+09
+Change To Liabilities       -1.000000e+00
+Net Borrowings              -2.681154e-01
+Investments                 -1.197345e-01
+Net Income                   1.812647e-01
+Total Liab                  -3.747576e-02
+Total Assets                 6.354751e-03
+Retained Earnings           -1.192692e-02
+Cash                         2.896582e-02
+Net Receivables              1.567684e-02
+Total Current Liabilities    1.059928e-01
+Total Current Assets        -4.476471e-02
+```
+
+Changing the time window of the holding period provides us with results that are much more expected than what we had previously. This makes sense as the market usually only reacts to a company's performance after the reports come out. The price of the company most likely will not reflect its financials (especially for large CAP companies) before those financials are released, even if the company is doing well under the hood.
+
 
 ## Non-Traditional Factors
+Another important use of factor models is to take non-traditional factors into account. In fact, this is the direction where most quantitative hedge funds are trending... obscure data sets.
 
 ### Twitter Sentiment
 
