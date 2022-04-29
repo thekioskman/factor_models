@@ -158,6 +158,8 @@ Short Long Term Debt                         1.137247e+00
 Total Current Assets                         6.000365e-02
 ```
 
+![3 months analysis](3%20month%20analysis%20factor_model.png)
+
 The results may not entirely be what we expected, but again it is important to note that I used large-cap stocks in my example, and there is research to support that factor models may not work very well on large-cap stocks. http://bearcave.com/finance/thesis_project/factor_analysis.pdf 
 
 
