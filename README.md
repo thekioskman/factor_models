@@ -174,7 +174,7 @@ quarterly_returns = []
 
 for i in range(len(times)):
     quarterly_data = pd.DataFrame()
-    #quarterly_data = stock_price_history[(stock_price_history["Date"] < times[i] ) & (stock_price_history["Date"] > times[i] - dateutil.relativedelta.relativedelta(months=3))].reset_index(drop=True)
+    # quarterly_data = stock_price_history[(stock_price_history["Date"] < times[i] ) & (stock_price_history["Date"] > times[i] - dateutil.relativedelta.relativedelta(months=3))].reset_index(drop=True)
     
     quarterly_data = stock_price_history[(stock_price_history["Date"] > times[i] ) & (stock_price_history["Date"] < times[i] + dateutil.relativedelta.relativedelta(weeks=2))].reset_index(drop=True)
 
@@ -206,6 +206,7 @@ Total Current Assets        -4.476471e-02
 
 Changing the time window of the holding period provides us with results that are much more expected than what we had previously. This makes sense as the market usually only reacts to a company's performance after the reports come out. The price of the company most likely will not reflect its financials (especially for large CAP companies) before those financials are released, even if the company is doing well under the hood.
 
+![2 week factor model holding wordcloud](2%20week%20holding%20period.png)
 
 ## Non-Traditional Factors
 Another important use of factor models is to take non-traditional factors into account. In fact, this is the direction where most quantitative hedge funds are trending... obscure data sets.
