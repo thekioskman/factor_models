@@ -140,7 +140,7 @@ After a further review of the results and the data, I discovered the reason why 
 <img src="https://render.githubusercontent.com/render/math?math=Return = \frac{Price_i}{Price_f}">
 
 But, having international companies involved does add a component of currency exchange rate risk that we have not accounted for in our model. Due to the small sample size, I believe that these accounted for some odd results. After removing the international companies, I obtained the following revised results.
-
+```
 const                                        5.825244e+10
 Change To Liabilities                        1.000000e+00
 Total Cash From Operating Activities         3.473057e-01
@@ -156,12 +156,14 @@ Net Receivables                              7.291306e-02
 Long Term Debt                              -3.087043e-01
 Short Long Term Debt                         1.137247e+00
 Total Current Assets                         6.000365e-02
+```
 
 The results may not entirely be what we expected, but again it is important to note that I used large-cap stocks in my example, and there is research to support that factor models may not work very well on large-cap stocks. http://bearcave.com/finance/thesis_project/factor_analysis.pdf 
 
 
 ## Building a Predictive model
 The second experiment I ran, was to see if the factor model had any predictive power. Instead of regression against the returns from 3 months prior, I performed a regression on the returns on a holding period of 2 weeks after the reports came out. The goal was to see which factors contributed most greatly to post-earnings drift.
+
 ```
 times = balance_sheet.columns.values[1::]
 times = list(map(datetime.fromisoformat, times))
