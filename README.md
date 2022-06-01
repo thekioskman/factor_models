@@ -8,7 +8,7 @@ Factors is a very loosely defined word, and it is one of the big ambiguities tha
 
 We would say EBITA Margin, Net Assets, Total Income are stock specific factors, where as interest rates, currency exchange rates and Index ETF returns are non stock specific factors. When constructing a factor model we would choose to either look at stock spefic factors or, non stock specific factors. 
 
-I would not advise trying to combine them however.
+I would not advise trying to combine them however. Unless you are using factors for quantiles based ranking of stocks.
 
 ### Variable Data and Constant Data
 
